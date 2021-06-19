@@ -38,7 +38,7 @@ public class CustomerController {
     @GetMapping("Create")
     public ModelAndView formCreate(){
         ModelAndView modelAndView = new ModelAndView("customer/createcustomer");
-        modelAndView.addObject("create",new CustomerFile());
+        modelAndView.addObject("Customer",new CustomerFile());
         return modelAndView;
     }
 
@@ -59,7 +59,7 @@ public class CustomerController {
         customer1.setProvince(customerFile.getProvince());
         customer1.setImg(fileName);
         customerService.save(customer1);
-        modelAndView.addObject("create",new CustomerFile());
+        modelAndView.addObject("Customer",new CustomerFile());
         modelAndView.addObject("message","Thêm mới thành công");
         return modelAndView;
     }
@@ -71,6 +71,16 @@ public class CustomerController {
         modelAndView.addObject("customer",customerList);
         return modelAndView;
     }
+
+
+    @GetMapping("Remove")
+    public String remove(Long id){
+        customerService.remove(id);
+        return "redirect:Show";
+    }
+
+
+
 
 
 
