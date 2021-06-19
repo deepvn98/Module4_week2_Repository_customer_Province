@@ -43,11 +43,11 @@ public class CustomerController {
     }
 
     @PostMapping("Create")
-    public ModelAndView create(CustomerFile customer){
+    public ModelAndView create(CustomerFile customerFile){
         ModelAndView modelAndView = new ModelAndView("customer/createcustomer");
-        MultipartFile multipartFile = customer.getImg();
-        String localFile = environment.getProperty("fileImg");
+        MultipartFile multipartFile = customerFile.getImg();
         String fileName = multipartFile.getOriginalFilename();
+        String localFile = environment.getProperty("fileImg");
         try {
             FileCopyUtils.copy(multipartFile.getBytes(),new File(localFile+fileName));
         } catch (IOException e) {
@@ -55,10 +55,11 @@ public class CustomerController {
         }
         Customer customer1 = new Customer();
         customer1.setId((long) (Math.random()*10000));
-        customer1.setName(customer.getName());
-        customer1.setProvince(customer.getProvince());
+        customer1.setName(customerFile.getName());
+        customer1.setProvince(customerFile.getProvince());
         customer1.setImg(fileName);
         customerService.save(customer1);
+        modelAndView.addObject("create",new CustomerFile());
         modelAndView.addObject("message","Thêm mới thành công");
         return modelAndView;
     }

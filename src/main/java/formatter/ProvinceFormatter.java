@@ -13,7 +13,7 @@ import java.util.Locale;
 public class ProvinceFormatter implements Formatter<Province> {
     private IProvinceService provinceService;
 
-    @Autowired
+//    @Autowired
     public ProvinceFormatter(IProvinceService provinceService) {
         this.provinceService = provinceService;
     }

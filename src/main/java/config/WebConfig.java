@@ -144,7 +144,7 @@ public class WebConfig implements WebMvcConfigurer ,ApplicationContextAware {
     @Bean(name = "multipath")
     public CommonsMultipartResolver resolver(){
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
-        commonsMultipartResolver.setMaxUploadSizePerFile(5500000);
+        commonsMultipartResolver.setMaxUploadSizePerFile(5240000);
         return commonsMultipartResolver;
     }
 
@@ -162,11 +162,11 @@ public class WebConfig implements WebMvcConfigurer ,ApplicationContextAware {
 
 
 //Formatter
-//    @Override
-//    public void addFormatters(FormatterRegistry registry){
-//        registry.addFormatter(new ProvinceFormatter(applicationContext.getBean(ProvinceService.class)));
-//
-//    }
+    @Override
+    public void addFormatters(FormatterRegistry registry){
+        registry.addFormatter(new ProvinceFormatter(applicationContext.getBean(ProvinceService.class)));
+
+    }
 
 
 

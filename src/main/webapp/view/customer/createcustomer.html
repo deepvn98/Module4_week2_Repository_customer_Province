@@ -13,12 +13,11 @@
 <form action="" method="post" th:object="${create}" enctype="multipart/form-data">
     <div>
         <label>Name</label><br>
-        <input th:field="*{name}" required="required" placeholder="Name">
+        <input type="text" th:field="*{name}" placeholder="Name">
     </div>
     <div>
         <label>Province</label><br>
-
-        <select th:field="*{province}" required="required" >
+        <select th:field="*{province}" >
             <th:block th:each="P:${provinces}">
                 <option th:value="${P.id}" th:text="${P.name}" ></option>
             </th:block>
