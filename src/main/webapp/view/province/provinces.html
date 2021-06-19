@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Các Tỉnh</title>
+</head>
+<body>
+<a th:href="@{Create}">Create Province</a>
+<br>
+<br>
+
+<h2 style="color: mediumblue">Danhh sách các tình thành phố</h2>
+<br>
+<table border="1 solid" width="40%" >
+    <tr>
+        <th>Name</th>
+        <th colspan="2">Action</th>
+    </tr>
+    <th:block th:each="P:${province}">
+        <tr>
+            <td th:text="${P.name}"></td>
+            <td><a th:href="@{Remove(id=${P.id})}">Remove</a></td>
+            <td><a th:href="@{Update(id=${P.id})}">Update</a></td>
+        </tr>
+    </th:block>
+
+</table>
+
+</body>
+</html>

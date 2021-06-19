@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import repository.ICustomerRepository;
 import service.ICustomerService;
 
+
+import java.util.Optional;
+
 @Service
 public class CustomerService implements ICustomerService {
     @Autowired
     private ICustomerRepository customerRepository;
-
 
     @Override
     public Iterable<Customer> findAll() {
@@ -24,11 +26,11 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public void save(Customer customer) {
-
+        customerRepository.save(customer);
     }
 
     @Override
     public void remove(Long id) {
-
+        customerRepository.delete(id);
     }
 }

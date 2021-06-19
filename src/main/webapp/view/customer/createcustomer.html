@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm mới khách hàng</title>
+</head>
+<body>
+<h2>Điền đầy đủ thông tin vào form</h2>
+<br>
+<th:block th:if="${message}">
+    <p th:text="${message}"></p>
+</th:block>
+<form action="" method="post" th:object="${create}" enctype="multipart/form-data">
+    <div>
+        <label>Name</label><br>
+        <input th:field="*{name}" required="required" placeholder="Name">
+    </div>
+    <div>
+        <label>Province</label><br>
+
+        <select th:field="*{province}" required="required" >
+            <th:block th:each="P:${provinces}">
+                <option th:value="${P.id}" th:text="${P.name}" ></option>
+            </th:block>
+        </select>
+    </div>
+    <div>
+        <label>Img</label><br>
+        <input type="file" th:field="*{img}">
+    </div>
+    <button style="color: mediumblue" type="submit">Save</button>
+</form>
+
+<a th:href="@{Show}">>>>Danh sách Khách hàng</a>
+</body>
+</html>

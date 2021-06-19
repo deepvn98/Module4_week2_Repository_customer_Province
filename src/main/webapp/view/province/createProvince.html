@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm mới Các tỉnh thành</title>
+</head>
+<body>
+<h1 style="color: mediumblue">Thêm mới thành phố</h1><br><br>
+<th:block th:if="${mess}">
+    <p th:text="${mess}" ></p>
+</th:block>
+<form action="" method="post" th:object="${create}">
+        <label>Province Name</label><br>
+        <input th:type="text" th:field="*{name}">
+        <button type="submit">Create</button>
+</form>
+<br><br>
+<a th:href="@{Show}">>>>Lists Provinces</a>
+</body>
+</html>

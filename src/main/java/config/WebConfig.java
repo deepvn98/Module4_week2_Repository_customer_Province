@@ -2,12 +2,15 @@ package config;
 
 import formatter.ProvinceFormatter;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -17,7 +20,10 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
@@ -28,17 +34,19 @@ import service.IProvinceService;
 import service.iplm.CustomerService;
 import service.iplm.ProvinceService;
 
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-@EnableWebMvc
 @Configuration
-@ComponentScan("controller")
+@EnableWebMvc
 @EnableTransactionManagement
 @EnableJpaRepositories("repository")
-public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
+@ComponentScan("controller")
+@PropertySource("classpath:fileUpload.properties")
+public class WebConfig implements WebMvcConfigurer ,ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Override
@@ -47,10 +55,9 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 
     }
 
-
-//Cấu hình Thymeleaf
+    //Cấu hình Thymleaf
     @Bean
-    public SpringResourceTemplateResolver templateResolver (){
+    public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setApplicationContext(applicationContext);
         templateResolver.setPrefix("/view/");
@@ -61,49 +68,41 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
     }
 
     @Bean
-    public SpringTemplateEngine templateEngine (){
-        SpringTemplateEngine templateEngine =  new SpringTemplateEngine();
+    public SpringTemplateEngine templateEngine() {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
         return templateEngine;
     }
 
     @Bean
-    public ThymeleafViewResolver thymeleafViewResolver (){
-        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
-        thymeleafViewResolver.setTemplateEngine(templateEngine());
-        thymeleafViewResolver.setCharacterEncoding("UTF-8");
-        return thymeleafViewResolver;
+    public ThymeleafViewResolver viewResolver() {
+        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+        viewResolver.setTemplateEngine(templateEngine());
+        viewResolver.setCharacterEncoding("UTF-8");
+        return viewResolver;
     }
 
-
-//Formatter
-    @Override
-    public void addFormatters(FormatterRegistry registry){
-        registry.addFormatter(
-                new ProvinceFormatter(applicationContext.getBean(ProvinceService.class)));
-    }
-
-    @Bean
-    public ICustomerService customerService(){
-        return new CustomerService();
-    }
-    @Bean
-    public IProvinceService provinceService(){
-        return new ProvinceService();
-    }
-
-
-
-//Cấu hình JPA
-
+    //Cấu hình JPA
     @Bean
     @Qualifier(value = "entityManager")
-    public EntityManager entityManager(EntityManagerFactory entityManagerFactory){
-            return entityManagerFactory.createEntityManager();
+    public EntityManager entityManager(EntityManagerFactory entityManagerFactory) {
+        return entityManagerFactory.createEntityManager();
     }
 
     @Bean
-    public DataSource dataSource(){
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+        em.setPackagesToScan("model");
+
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+        em.setJpaProperties(additionalProperties());
+        return em;
+    }
+
+    @Bean
+    public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/customer_repo");
@@ -112,29 +111,63 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         return dataSource;
     }
 
-
-    public Properties additionalProperties(){
-        Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "update");
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-        return properties;
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean containerEntityManagerFactoryBean(){
-        LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-        bean.setDataSource(dataSource());
-        bean.setPackagesToScan("model");
-
-        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        bean.setJpaVendorAdapter(vendorAdapter);
-        bean.setJpaProperties(additionalProperties());
-        return bean;
-    }
     @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(emf);
         return transactionManager;
     }
+
+    public Properties additionalProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        return properties;
+    }
+
+//Các biến môi trường dự án
+    @Bean
+    public IProvinceService provinceService(){
+        return new ProvinceService();
+    }
+
+    @Bean
+    public ICustomerService customerService(){
+        return new CustomerService();
+    }
+
+
+//uploadFile
+    @Autowired
+    Environment environment;
+
+    @Bean(name = "multipath")
+    public CommonsMultipartResolver resolver(){
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+        commonsMultipartResolver.setMaxUploadSizePerFile(5500000);
+        return commonsMultipartResolver;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String file = environment.getProperty("fileImg").toString();
+        registry.addResourceHandler("/i/**")
+                .addResourceLocations("file:" + file);
+    }
+    @Override
+    public void configureDefaultServletHandling(
+            DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+
+//Formatter
+//    @Override
+//    public void addFormatters(FormatterRegistry registry){
+//        registry.addFormatter(new ProvinceFormatter(applicationContext.getBean(ProvinceService.class)));
+//
+//    }
+
+
+
 }

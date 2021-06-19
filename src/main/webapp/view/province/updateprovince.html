@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sửa Thông tin tỉnh thành</title>
+</head>
+<body>
+<h2>Thông tin cũ</h2>
+<table border="1 solid">
+    <tr>
+        <th>Name</th>
+    </tr>
+    <tr>
+        <td th:text="${update.name}"></td>
+    </tr>
+</table>
+<p>------------------------------</p>
+<br>
+<form action="" method="post" th:object="${update1}">
+    <h3>nhập vào tên tỉnh mới</h3>
+    <input th:type="text" th:field="*{name}">
+    <button type="submit">Update</button>
+
+</form>
+</body>
+</html>

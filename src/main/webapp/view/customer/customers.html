@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Khách hàng</title>
+</head>
+<body>
+<h1 style="color: mediumblue">Danh sách khách hàng</h1>
+<table border="1 solid">
+    <tr>
+        <th>Name</th>
+        <th>Province</th>
+        <th>Img</th>
+        <th>Action</th>
+    </tr>
+    <th:block th:each="C:${customer}">
+        <tr>
+            <td th:text="${C.name}"></td>
+            <td th:text="${C.province.name}"></td>
+<!--            <td th:text="${C.img}"></td>-->
+            <td>
+                <img th:src="@{/'i'/${C.img}}">
+            </td>
+            <td><a th:href="@{}">Remove</a></td>
+            <td><a th:href="@{}">Update</a></td>
+        </tr>
+    </th:block>
+
+</table>
+</body>
+</html>

@@ -1,22 +1,75 @@
 package controller;
 
+import model.Customer;
+import model.CustomerFile;
+import model.Province;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import service.ICustomerService;
 import service.IProvinceService;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("Customer/")
 public class CustomerController {
-
     @Autowired
     private ICustomerService customerService;
     @Autowired
     private IProvinceService provinceService;
+    @Autowired
+    private Environment environment;
 
-//    @GetMapping("Showall")
+    @ModelAttribute("provinces")
+    public List<Province> getList(){
+        return (List<Province>) provinceService.findAll();
+    }
+
+    @GetMapping("Create")
+    public ModelAndView formCreate(){
+        ModelAndView modelAndView = new ModelAndView("customer/createcustomer");
+        modelAndView.addObject("create",new CustomerFile());
+        return modelAndView;
+    }
+
+    @PostMapping("Create")
+    public ModelAndView create(CustomerFile customer){
+        ModelAndView modelAndView = new ModelAndView("customer/createcustomer");
+        MultipartFile multipartFile = customer.getImg();
+        String localFile = environment.getProperty("fileImg");
+        String fileName = multipartFile.getOriginalFilename();
+        try {
+            FileCopyUtils.copy(multipartFile.getBytes(),new File(localFile+fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Customer customer1 = new Customer();
+        customer1.setId((long) (Math.random()*10000));
+        customer1.setName(customer.getName());
+        customer1.setProvince(customer.getProvince());
+        customer1.setImg(fileName);
+        customerService.save(customer1);
+        modelAndView.addObject("message","Thêm mới thành công");
+        return modelAndView;
+    }
+
+    @GetMapping("Show")
+    public ModelAndView Show(){
+        List<Customer> customerList = (List<Customer>) customerService.findAll();
+        ModelAndView modelAndView = new ModelAndView("customer/customers");
+        modelAndView.addObject("customer",customerList);
+        return modelAndView;
+    }
 
 
 

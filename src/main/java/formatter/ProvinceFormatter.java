@@ -8,13 +8,12 @@ import service.IProvinceService;
 
 import java.text.ParseException;
 import java.util.Locale;
+
 @Component
 public class ProvinceFormatter implements Formatter<Province> {
     private IProvinceService provinceService;
 
-    public ProvinceFormatter() {
-    }
-
+    @Autowired
     public ProvinceFormatter(IProvinceService provinceService) {
         this.provinceService = provinceService;
     }
@@ -27,10 +26,6 @@ public class ProvinceFormatter implements Formatter<Province> {
 
     @Override
     public String print(Province object, Locale locale) {
-        return null;
+        return "[" + object.getId() + ", " +object.getName() + "]";
     }
-
-
-
-
 }
