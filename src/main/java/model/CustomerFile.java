@@ -11,6 +11,11 @@ public class CustomerFile {
     public CustomerFile() {
     }
 
+
+    public CustomerFile(String name) {
+        this.name = name;
+    }
+
     public CustomerFile(Long id, String name, Province province, MultipartFile img) {
         this.id = id;
         this.name = name;

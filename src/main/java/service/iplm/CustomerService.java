@@ -21,7 +21,7 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public Customer findById(Long id) {
-        return customerRepository.findOne(id);
+        return customerRepository.findById(id).get();
     }
 
     @Override
@@ -31,6 +31,6 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public void remove(Long id) {
-        customerRepository.delete(id);
+        customerRepository.deleteById(id);
     }
 }

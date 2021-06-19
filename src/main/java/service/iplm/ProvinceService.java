@@ -20,7 +20,7 @@ public class ProvinceService implements IProvinceService {
 
     @Override
     public Province findById(Long id) {
-        return provinceRepository.findOne(id);
+        return provinceRepository.findById(id).get();
     }
 
     @Override
@@ -31,6 +31,6 @@ public class ProvinceService implements IProvinceService {
 
     @Override
     public void remove(Long id) {
-        provinceRepository.delete(id);
+        provinceRepository.deleteById(id);
     }
 }

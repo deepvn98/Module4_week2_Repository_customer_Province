@@ -19,7 +19,7 @@
             <td th:text="${C.province.name}"></td>
 <!--            <td th:text="${C.img}"></td>-->
             <td>
-                <img th:src="@{/'i'/${C.img}}">
+                <img th:src="@{'/i/'+${C.img}}" th:alt="${C.img}" width="200px">
             </td>
             <td><a th:href="@{Remove(id = ${C.id})}">Remove</a></td>
             <td><a th:href="@{Update(id = ${C.id})}">Update</a></td>

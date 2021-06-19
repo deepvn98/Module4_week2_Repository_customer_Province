@@ -141,7 +141,7 @@ public class WebConfig implements WebMvcConfigurer ,ApplicationContextAware {
     @Autowired
     Environment environment;
 
-    @Bean(name = "multipath")
+    @Bean(name = "multipartResolver")
     public CommonsMultipartResolver resolver(){
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
         commonsMultipartResolver.setMaxUploadSizePerFile(5240000);
@@ -154,6 +154,7 @@ public class WebConfig implements WebMvcConfigurer ,ApplicationContextAware {
         registry.addResourceHandler("/i/**")
                 .addResourceLocations("file:" + file);
     }
+
     @Override
     public void configureDefaultServletHandling(
             DefaultServletHandlerConfigurer configurer) {
